@@ -24,4 +24,4 @@ The `HttpWebserviceClient` class handles a Http webservice request with a Loxone
 With this `WebserviceClient` implementation it is possible to receive live updates from the Loxone Miniserver via `StateEvents`
 *Example:* `.\LxCommunicator.NET.Example.Http\LxCommunicator.NET.Example.Http.csproj`
 
-> **Note**<br>Every Webservice that needs authentication is sent as encrypted webservice.<br>The Loxone Miniserver does not support encryption on every webservice, for example binary files or images are not support for more detail please see our [API documetation](https://www.loxone.com/enen/kb/api/ ).
+> **Note**<br>Every Webservice that needs authentication is sent as encrypted webservice.<br>The Loxone Miniserver does not support encryption on every webservice, for example binary files or images are not supported.<br>For more detail please see our [API documetation](https://www.loxone.com/enen/kb/api/ ).
