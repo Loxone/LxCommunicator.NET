@@ -12,10 +12,16 @@ Use the namespace `Loxone.Communicator` and in case of handling events via webso
 <br>
 The libary manages the requiring and refreshing of token authentication. Storing, loading and killing of tokens needs to be implemented by the application layer.
 
-#### Use WecbsocketWebserviceClient
+#### Use `WecbsocketWebserviceClient`
+The `WecbsocketWebserviceClient` class handles a websocket connection with a Loxone Miniserver including token authentication and encryption.
+<br>
+With this `WebserviceClient` implementation it is possible to receive live updates from the Loxone Miniserver via `StateEvents`
 *Example:* `.\LxCommunicator.NET.Example.Http\LxCommunicator.NET.Example.Http.csproj`
 
-#### Use HttpWebserviceClient
+#### Use `HttpWebserviceClient`
+The `HttpWebserviceClient` class handles a Http webservice request with a Loxone Miniserver, including token authentication and encryption.
+<br>
+With this `WebserviceClient` implementation it is possible to receive live updates from the Loxone Miniserver via `StateEvents`
 *Example:* `.\LxCommunicator.NET.Example.Http\LxCommunicator.NET.Example.Http.csproj`
 
-> **Note for Http**<br>Every Webservice that needs authentication is sent as encrypted webservice.<br>Not all Webservices are supporting encryption, for example binary files.
+> **Note**<br>Every Webservice that needs authentication is sent as encrypted webservice.<br>The Loxone Miniserver does not support encryption on every webservice, for example binary files or images are not support for more detail please see our [API documetation](https://www.loxone.com/enen/kb/api/ ).
