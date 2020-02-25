@@ -127,7 +127,7 @@ namespace Loxone.Communicator {
 				throw new WebserviceException("Sending the Webservice failed!", response);
 			}
 			if ( content.Code != System.Net.HttpStatusCode.OK) {
-				throw new WebserviceException($"Sending the Webservice {content.Control} failed!", response);
+				throw new WebserviceException($"Sending the Webservice failed! ({content.Code})", response);
 			}
 			content = response.GetAsWebserviceContent<T>();
 			if(DefaultWebserviceComparer.Comparer.Compare(Command, content.Control) == 0) {
