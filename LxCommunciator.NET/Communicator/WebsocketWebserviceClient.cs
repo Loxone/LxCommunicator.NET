@@ -125,7 +125,7 @@ namespace Loxone.Communicator {
 				while (WebSocket.State == WebSocketState.Open) {
 					WebserviceResponse response = await ReceiveWebsocketMessage(1024, TokenSource.Token);
 					if (!HandleWebserviceResponse(response) && !ParseEventTable(response.Content, response.Header.Type)) {
-						OnReceiveMessge.BeginInvoke(WebSocket, new MessageReceivedEventArgs(response), null, null);
+						OnReceiveMessge?.BeginInvoke(WebSocket, new MessageReceivedEventArgs(response), null, null);
 					}
 					await Task.Delay(10);
 				}
