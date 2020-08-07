@@ -6,6 +6,9 @@ LxCommunicator can be installed using NuGet
 - Loxone Electronics GmbH doesn't provide any support for this library
 - Please submit an issue or file an pull request if you find any issue
 
+## Supported Frameworks
+- .Net Framework 4.7.2
+
 ## Use LxCommunicator.NET
 Use the namespace `Loxone.Communicator` and in case of handling events via websocket also `Loxone.Communicator.Events`
 The libary manages the requiring and refreshing of token authentication. Storing, loading and killing of tokens needs to be implemented by the application layer.
