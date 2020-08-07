@@ -10,10 +10,10 @@ LxCommunicator can be installed using NuGet
 Use the namespace `Loxone.Communicator` and in case of handling events via websocket also `Loxone.Communicator.Events`
 The libary manages the requiring and refreshing of token authentication. Storing, loading and killing of tokens needs to be implemented by the application layer.
 
-#### Use `WecbsocketWebserviceClient`
-The `WecbsocketWebserviceClient` class handles a websocket connection with a Loxone Miniserver including token authentication and encryption.
-With this `WebserviceClient` implementation it is possible to receive live updates from the Loxone Miniserver via `StateEvents`
-*Example:* `.\LxCommunicator.NET.Example.Http\LxCommunicator.NET.Example.Http.csproj`
+#### Use `WebsocketWebserviceClient`
+The `WebsocketWebserviceClient` class handles a websocket connection with a Loxone Miniserver including token authentication and encryption.
+With this `WebsocketWebserviceClient` implementation it is possible to receive live updates from the Loxone Miniserver via `StateEvents`
+*Example:* `.\LxCommunicator.NET.Example.Websocket\LxCommunicator.NET.Example.Websocket.csproj`
 
 #### Use `HttpWebserviceClient`
 The `HttpWebserviceClient` class handles a Http webservice request with a Loxone Miniserver, including token authentication and encryption.
