@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
+using System.Text;
 
 namespace Loxone.Communicator.Events {
-	public class WeatherState : EventState{
+	public class WeatherState : EventState {
 		/// <summary>
 		/// The date since the last update
 		/// </summary>

@@ -20,7 +20,7 @@ namespace Loxone.Communicator {
 		/// </summary>
 		/// <param name="message">The error message</param>
 		/// <param name="response">the response that caused the error</param>
-		public WebserviceException(string message, WebserviceResponse response) : base(message){
+		public WebserviceException(string message, WebserviceResponse response) : base(message) {
 			Response = response;
 		}
 		/// <summary>

@@ -38,7 +38,7 @@ namespace Loxone.Communicator {
 		/// The timeout how long the miniserver may take to respond
 		/// </summary>
 		public int Timeout { get; set; } = 5000;
-		
+
 		internal ManualResetEvent ResponseReceived = new ManualResetEvent(false);
 		/// <summary>
 		/// The matching response to the request
@@ -62,11 +62,12 @@ namespace Loxone.Communicator {
 		/// <param name="response">The WebserviceResponse to validate</param>
 		/// <returns>Whether the validation succeeded or not</returns>
 		public virtual bool TryValidateResponse(WebserviceResponse response) {
-			if( response != null) {
+			if (response != null) {
 				Response = response;
 				ResponseReceived.Set();
 				return true;
-			} else {
+			}
+			else {
 				return false;
 			}
 		}
@@ -123,18 +124,19 @@ namespace Loxone.Communicator {
 		/// <returns>Whether the validation succeeded or not</returns>
 		public override bool TryValidateResponse(WebserviceResponse response) {
 			WebserviceContent content = response.GetAsWebserviceContent();
-			if(content == null) {
+			if (content == null) {
 				throw new WebserviceException("Sending the Webservice failed!", response);
 			}
-			if ( content.Code != System.Net.HttpStatusCode.OK) {
+			if (content.Code != System.Net.HttpStatusCode.OK) {
 				throw new WebserviceException($"Sending the Webservice failed! ({content.Code})", response);
 			}
 			content = response.GetAsWebserviceContent<T>();
-			if(DefaultWebserviceComparer.Comparer.Compare(Command, content.Control) == 0) {
+			if (DefaultWebserviceComparer.Comparer.Compare(Command, content.Control) == 0) {
 				Response = response;
 				ResponseReceived.Set();
 				return true;
-			} else {
+			}
+			else {
 				return false;
 			}
 		}

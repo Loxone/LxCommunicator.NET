@@ -3,18 +3,13 @@ using Loxone.Communicator.Events;
 using System;
 using System.Threading.Tasks;
 
-namespace LxCommunicator.NET.Example.Websocket
-{
-    internal class Program
-    {
+namespace LxCommunicator.NET.Example.Websocket {
+    internal class Program {
         private static WebsocketWebserviceClient client;
 
-        private static async Task Main(string[] args)
-        {
-            using (client = new WebsocketWebserviceClient("testminiserver.loxone.com", 7777, 2, "098802e1-02b4-603c-ffffeee000d80cfd", "LxCommunicator.NET.Websocket"))
-            {
-                using (TokenHandler handler = new TokenHandler(client, "app"))
-                {
+        private static async Task Main(string[] args) {
+            using (client = new WebsocketWebserviceClient("testminiserver.loxone.com", 7777, 2, "098802e1-02b4-603c-ffffeee000d80cfd", "LxCommunicator.NET.Websocket")) {
+                using (TokenHandler handler = new TokenHandler(client, "app")) {
                     handler.SetPassword("LoxLIVEpasswordTest");
                     client.OnReceiveEventTable += Client_OnReceiveEventTable;
                     client.OnAuthenticated += Client_OnAuthenticated;
@@ -26,15 +21,12 @@ namespace LxCommunicator.NET.Example.Websocket
             }
         }
 
-        private static void Client_OnAuthenticated(object sender, ConnectionAuthenticatedEventArgs e)
-        {
+        private static void Client_OnAuthenticated(object sender, ConnectionAuthenticatedEventArgs e) {
             Console.WriteLine("Successfully authenticated!");
         }
 
-        private static void Client_OnReceiveEventTable(object sender, EventStatesParsedEventArgs e)
-        {
-            foreach (EventState state in e.States)
-            {
+        private static void Client_OnReceiveEventTable(object sender, EventStatesParsedEventArgs e) {
+            foreach (EventState state in e.States) {
                 Console.WriteLine(state.ToString());
             }
         }

@@ -31,12 +31,13 @@ namespace Loxone.Communicator.Events {
 		/// <param name="reader">The binaryReader that should be read of</param>
 		/// <returns>The read daytimerEntry</returns>
 		public static DaytimerEntry Parse(System.IO.BinaryReader reader) {
-			DaytimerEntry entry = new DaytimerEntry();
-			entry.Mode = reader.ReadInt32();
-			entry.From = reader.ReadInt32();
-			entry.To = reader.ReadInt32();
-			entry.NeedActivate = reader.ReadInt32();
-			entry.Value = reader.ReadDouble();
+			DaytimerEntry entry = new DaytimerEntry {
+				Mode = reader.ReadInt32(),
+				From = reader.ReadInt32(),
+				To = reader.ReadInt32(),
+				NeedActivate = reader.ReadInt32(),
+				Value = reader.ReadDouble()
+			};
 			return entry;
 		}
 	}

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
+using System.Text;
 
 namespace Loxone.Communicator.Events {
-	public class DaytimerState : EventState{
+	public class DaytimerState : EventState {
 		/// <summary>
 		/// Default value
 		/// </summary>
