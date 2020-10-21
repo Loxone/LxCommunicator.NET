@@ -1,12 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+	<TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
+	<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LxCommunicator.NET\LxCommunicator.NET.csproj" />
+	  <ProjectReference Include="..\LxCommunicator.NET\LxCommunicator.NET.csproj">
+	    <IncludeAssets>all</IncludeAssets>
+	  </ProjectReference>
   </ItemGroup>
 
 </Project>

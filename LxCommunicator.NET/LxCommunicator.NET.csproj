@@ -1,12 +1,30 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
+    <PackageId>LxCommunicator</PackageId>
+    <Version>0.9.4</Version>
+    <Authors>Loxone Electronic GmbH</Authors>
+    <Product>LxCommunicator.NET</Product>
+    <Description>This library exposes all necessary classes to establish a secure and encrypted connection to a Loxone Miniserver.</Description>
+    <Copyright>Copyright 2020 Loxone Electronic GmbH</Copyright>
+    <PackageProjectUrl>https://github.com/Loxone/LxCommunicator.NET</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Loxone/LxCommunicator.NET.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>Loxone Miniserver Loxone-Miniserver Smart-Home Automation Home-Automation</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
+	
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
+    <Reference Include="System.Web" />
+  </ItemGroup>
+	
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Portable.BouncyCastle" Version="1.8.6.7" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
   </ItemGroup>
 
 </Project>
