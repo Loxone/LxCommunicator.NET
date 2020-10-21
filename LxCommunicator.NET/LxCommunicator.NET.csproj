@@ -8,7 +8,7 @@
     <Product>LxCommunicator.NET</Product>
     <Description>This library exposes all necessary classes to establish a secure and encrypted connection to a Loxone Miniserver.</Description>
     <Copyright>Copyright 2020 Loxone Electronic GmbH</Copyright>
-    <PackageProjectUrl>https://github.com/Loxone/LxCommunicator.NET</PackageProjectUrl>
+    <PackageProjectUrl>https://www.loxone.com</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Loxone/LxCommunicator.NET.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>Loxone Miniserver Loxone-Miniserver Smart-Home Automation Home-Automation</PackageTags>
@@ -25,6 +25,14 @@
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Portable.BouncyCastle" Version="1.8.6.7" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
+  </ItemGroup>
+	
+
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
