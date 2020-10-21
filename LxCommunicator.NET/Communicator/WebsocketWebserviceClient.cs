@@ -3,12 +3,15 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
+using Timer = System.Timers.Timer;
 
 namespace Loxone.Communicator {
 	/// <summary>
@@ -21,6 +24,28 @@ namespace Loxone.Communicator {
 		public HttpWebserviceClient HttpClient { get; private set; }
 
 		/// <summary>
+		/// The intervall in which the keepalive request should be sent. The miniserver expects to get a request at least every 5 minutes
+		/// </summary>
+		public TimeSpan KeepaliveIntervall {
+			get => keepaliveIntervall;
+			set {
+				keepaliveIntervall = value;
+				HandleKeepalive();
+			}
+		}
+
+		/// <summary>
+		/// Defines if keepalive requests should be sent. See also <seealso cref="KeepaliveIntervall"/>
+		/// </summary>
+		public bool SendKeepalive {
+			get => sendKeepalive;
+			set {
+				sendKeepalive = value;
+				HandleKeepalive();
+			}
+		}
+
+		/// <summary>
 		/// The websocket the webservices will be sent with.
 		/// </summary>
 		private ClientWebSocket WebSocket;
@@ -29,6 +54,8 @@ namespace Loxone.Communicator {
 		/// A Listener to catch every incoming message from the miniserver
 		/// </summary>
 		private Task Listener;
+		private bool sendKeepalive = true;
+		private TimeSpan keepaliveIntervall = TimeSpan.FromMinutes(2);
 
 		/// <summary>
 		/// Event, fired when a not expected Message is received.
@@ -48,6 +75,8 @@ namespace Loxone.Communicator {
 		/// </summary>
 		public event EventHandler<ConnectionAuthenticatedEventArgs> OnAuthenticated;
 
+		public event EventHandler<KeepaliveEventArgs> OnKeepalive;
+
 		/// <summary>
 		/// The cancellationTokenSource used for cancelling the listener and receiving messages
 		/// </summary>
@@ -59,6 +88,11 @@ namespace Loxone.Communicator {
 		private readonly List<WebserviceRequest> Requests = new List<WebserviceRequest>();
 
 		/// <summary>
+		/// Timer for sending keep alive requests
+		/// </summary>
+		private readonly Timer KeepaliveTimer = new Timer() { AutoReset = false }; // sending keepalive every 2 minutes
+
+		/// <summary>
 		/// Initialises a new instance of the websocketWebserviceClient.
 		/// </summary>
 		/// <param name="ip">The ip adress of the miniserver</param>
@@ -67,11 +101,59 @@ namespace Loxone.Communicator {
 		/// <param name="deviceUuid">The uuid of the current device</param>
 		/// <param name="deviceInfo">A short info of the current device</param>
 		public WebsocketWebserviceClient(string ip, int port, int permissions, string deviceUuid, string deviceInfo) {
+			KeepaliveTimer.Elapsed += KeepaliveTimer_Elapsed;
+
 			IP = ip;
 			Port = port;
 			Session = new Session(null, permissions, deviceUuid, deviceInfo);
 			HttpClient = new HttpWebserviceClient(IP, Port, Session);
 			Session.Client = HttpClient;
+		}
+
+		/// <summary>
+		/// Gets triggered everytime a Keepalive request should be sent 
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private async void KeepaliveTimer_Elapsed(object sender, ElapsedEventArgs e) {
+			if (SendKeepalive) {
+				try {
+					WebserviceResponse response = await SendWebservice(new WebserviceRequest("keepalive", EncryptionType.None));
+					InvokeOnKeepalive(response != null);
+				}
+				catch {
+					InvokeOnKeepalive(false);
+				}
+			}
+			HandleKeepalive();
+		}
+
+		/// <summary>
+		/// Triggers the invokation of the OnKeepalive event
+		/// </summary>
+		/// <param name="isRepsonding"></param>
+		private void InvokeOnKeepalive(bool isRepsonding) {
+			if (SendKeepalive) {
+				try {
+					OnKeepalive?.Invoke(this, new KeepaliveEventArgs(isRepsonding));
+				}
+				catch { }
+			}
+		}
+
+		/// <summary>
+		/// Updates the KeepaliveTimer
+		/// </summary>
+		private void HandleKeepalive() {
+			KeepaliveTimer.Interval = KeepaliveIntervall.TotalMilliseconds;
+			KeepaliveTimer.Enabled = SendKeepalive;
+		}
+
+		/// <summary>
+		/// Stops the KeepaliveTimer
+		/// </summary>
+		private void StopKeepalive() {
+			KeepaliveTimer.Enabled = false;
 		}
 
 		/// <summary>
@@ -93,14 +175,17 @@ namespace Loxone.Communicator {
 					AuthResponse authResponse = JsonConvert.DeserializeObject<AuthResponse>(response);
 					if (authResponse.ValidUntil != default && authResponse.TokenRights != default) {
 						OnAuthenticated.Invoke(this, new ConnectionAuthenticatedEventArgs(TokenHandler));
+						HandleKeepalive();
 						return;
 					}
 				}
 				if (await TokenHandler.RequestNewToken()) {
 					OnAuthenticated.Invoke(this, new ConnectionAuthenticatedEventArgs(TokenHandler));
+					HandleKeepalive();
 					return;
 				}
 				await HttpClient?.Authenticate(new TokenHandler(HttpClient, handler.Username, handler.Token, false));
+				HandleKeepalive();
 			}
 		}
 
@@ -135,7 +220,7 @@ namespace Loxone.Communicator {
 			Listener = Task.Run(async () => {
 				while (WebSocket.State == WebSocketState.Open) {
 					WebserviceResponse response = await ReceiveWebsocketMessage(1024, TokenSource.Token);
-					if (!HandleWebserviceResponse(response) && !ParseEventTable(response.Content, response.Header.Type)) {
+					if (!ParseEventTable(response) && !HandleWebserviceResponse(response)) {
 						OnReceiveMessge?.Invoke(WebSocket, new MessageReceivedEventArgs(response));
 					}
 					await Task.Delay(10);
@@ -190,7 +275,7 @@ namespace Loxone.Communicator {
 		/// <param name="token">the cancellationToken to cancel receiving messages</param>
 		/// <returns>The received webserviceResponse</returns>
 		private async Task<WebserviceResponse> ReceiveWebsocketMessage(uint bufferSize, CancellationToken token) {
-			byte[] data;
+			byte[] data, content = null;
 			MessageHeader header;
 			do {
 				data = await InternalReceiveWebsocketMessage(bufferSize, token);
@@ -198,8 +283,10 @@ namespace Loxone.Communicator {
 					throw new WebserviceException("Received incomplete Data: \n" + Encoding.UTF8.GetString(data));
 				}
 			} while (header == null || header.Estimated);
-			data = await InternalReceiveWebsocketMessage(header.Length, TokenSource.Token);
-			return new WebserviceResponse(header, data, (int?)WebSocket?.CloseStatus);
+			if (header.Length > 0) {
+				content = await InternalReceiveWebsocketMessage(header.Length, TokenSource.Token);
+			}
+			return new WebserviceResponse(header, content, (int?)WebSocket?.CloseStatus);
 		}
 
 		/// <summary>
@@ -250,13 +337,16 @@ namespace Loxone.Communicator {
 		/// <param name="content">The message that should be parsed</param>
 		/// <param name="type">The expected type of the eventTable</param>
 		/// <returns>Whether or not parsing the eventTable was successful</returns>
-		private bool ParseEventTable(byte[] content, MessageType type) {
+		private bool ParseEventTable(WebserviceResponse response) {
+			if (response == null || !response.Header.IsEventMessage) {
+				return false;
+			}
 			List<EventState> eventStates = new List<EventState>();
-			using (BinaryReader reader = new BinaryReader(new MemoryStream(content))) {
+			using (BinaryReader reader = new BinaryReader(new MemoryStream(response.Content))) {
 				try {
 					do {
 						EventState state = null;
-						switch (type) {
+						switch (response.Header.Type) {
 							case MessageType.EventTableValueStates:
 								state = ValueState.Parse(reader);
 								break;
@@ -272,7 +362,6 @@ namespace Loxone.Communicator {
 							case MessageType.EventTableWeatherStates:
 								state = WeatherState.Parse(reader);
 								break;
-
 							default:
 								return false;
 						}
@@ -284,7 +373,7 @@ namespace Loxone.Communicator {
 				}
 			}
 			if (OnReceiveEventTable != null) {
-				OnReceiveEventTable.Invoke(this, new EventStatesParsedEventArgs(type, eventStates));
+				OnReceiveEventTable.Invoke(this, new EventStatesParsedEventArgs(response.Header.Type, eventStates));
 				return true;
 			}
 			else {
@@ -296,11 +385,13 @@ namespace Loxone.Communicator {
 		/// Disposes the WebserviceClient
 		/// </summary>
 		public override void Dispose() {
+			StopKeepalive();
 			base.Dispose();
 			TokenSource?.Cancel();
 			TokenSource?.Dispose();
 			HttpClient?.Dispose();
 			WebSocket?.Dispose();
+			KeepaliveTimer?.Dispose();
 			Requests.Clear();
 		}
 	}

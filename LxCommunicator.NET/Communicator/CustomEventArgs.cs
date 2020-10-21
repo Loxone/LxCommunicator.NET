@@ -64,4 +64,12 @@ namespace Loxone.Communicator {
 			TokenHandler = handler;
 		}
 	}
+
+	public class KeepaliveEventArgs : EventArgs {
+		public KeepaliveEventArgs(bool isResponding) {
+			IsResponding = isResponding;
+		}
+
+		public bool IsResponding { get; }
+	}
 }
