@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Net.Http;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace Loxone.Communicator {
 	/// <summary>
@@ -32,7 +32,7 @@ namespace Loxone.Communicator {
 		/// </summary>
 		/// <param name="request">The Request that should be sent</param>
 		/// <returns>The Response the miniserver returns</returns>
-		public async override Task<WebserviceResponse> SendWebservice(WebserviceRequest request) {
+		public override async Task<WebserviceResponse> SendWebservice(WebserviceRequest request) {
 			WebserviceRequest encRequest = await GetEncryptedRequest(request);
 			Uri url = new UriBuilder() {
 				Scheme = "http",
@@ -60,7 +60,7 @@ namespace Loxone.Communicator {
 		/// <param name="request">The request that should be encrypted</param>
 		/// <returns>the encrypted clone of the given request</returns>
 		private async Task<WebserviceRequest> GetEncryptedRequest(WebserviceRequest request) {
-			if(request == null) {
+			if (request == null) {
 				return null;
 			}
 			WebserviceRequest encRequest = (WebserviceRequest)request.Clone();

@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using Newtonsoft.Json;
 
 namespace Loxone.Communicator {
 	public static class LxDateTime {
@@ -25,16 +25,20 @@ namespace Loxone.Communicator {
 		public override DateTime ReadJson(JsonReader reader, Type objectType, DateTime existingValue, bool hasExistingValue, JsonSerializer serializer) {
 			if (reader.Value is long integer) {
 				return LxDateTime.Parse(integer);
-			} else if (reader.Value is double floatingPoint) {
+			}
+			else if (reader.Value is double floatingPoint) {
 				return LxDateTime.Parse(floatingPoint);
-			} else if (reader.Value is DateTime dateTime) {
+			}
+			else if (reader.Value is DateTime dateTime) {
 				return dateTime;
-			} else if (reader.Value is string text) {
+			}
+			else if (reader.Value is string text) {
 				return LxDateTime.Parse(Convert.ToDouble(text));
-			} else {
+			}
+			else {
 				return LxDateTime.Invalid;
 			}
-			
+
 		}
 
 		public override void WriteJson(JsonWriter writer, DateTime value, JsonSerializer serializer) {

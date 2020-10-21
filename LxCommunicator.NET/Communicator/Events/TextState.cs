@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
-using Newtonsoft.Json;
+using System.Text;
 
 namespace Loxone.Communicator.Events {
 	public class TextState : EventState {
@@ -34,7 +34,7 @@ namespace Loxone.Communicator.Events {
 				state.Text += Encoding.UTF8.GetString(reader.ReadBytes(Convert.ToInt32(Math.Min(int.MaxValue, length - offset))));
 				offset += int.MaxValue;
 			} while (length > offset);
-			while(reader.BaseStream.Position % 4 != 0) {
+			while (reader.BaseStream.Position % 4 != 0) {
 				reader.ReadByte();
 			}
 			return state;

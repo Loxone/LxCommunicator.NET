@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.OpenSsl;
+using Org.BouncyCastle.Security;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Org.BouncyCastle.Crypto.Parameters;
-using Org.BouncyCastle.OpenSsl;
-using Org.BouncyCastle.Security;
 
 namespace Loxone.Communicator {
 	public class Session {
@@ -48,7 +48,7 @@ namespace Loxone.Communicator {
 		/// The current random salt
 		/// </summary>
 		public string Salt { get; private set; }
-		
+
 		/// <summary>
 		/// Creates a new instance of the session object. <see cref="Session"/> is used to store information about the current connection to the miniserver.
 		/// </summary>
@@ -176,7 +176,8 @@ namespace Loxone.Communicator {
 		public HashAlgorithm GetHashAlgorithm() {
 			if (!string.IsNullOrEmpty(Algorithm) && Algorithm == "SHA256") {
 				return new SHA256CryptoServiceProvider();
-			} else {
+			}
+			else {
 				return new SHA1CryptoServiceProvider();
 			}
 		}
@@ -184,7 +185,8 @@ namespace Loxone.Communicator {
 		public HMAC GetHMAC() {
 			if (!string.IsNullOrEmpty(Algorithm) && Algorithm == "SHA256") {
 				return new HMACSHA256();
-			} else {
+			}
+			else {
 				return new HMACSHA1();
 			}
 		}

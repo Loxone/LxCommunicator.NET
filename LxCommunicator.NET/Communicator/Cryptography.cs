@@ -60,7 +60,7 @@ namespace Loxone.Communicator {
 		/// <param name="session">The session that should be used, provides the encryption key</param>
 		/// <returns>The decrypted text</returns>
 		public static string AesDecrypt(string input, Session session) {
-			if(input == null) {
+			if (input == null) {
 				return null;
 			}
 			byte[] inputBytes = Convert.FromBase64String(input);

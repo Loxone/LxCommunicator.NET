@@ -1,19 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
-VisualStudioVersion = 16.0.29025.244
+VisualStudioVersion = 16.0.30330.147
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LxCommunicator.NET.Example.Websocket", "LxCommunicator.NET.Example.Websocket\LxCommunicator.NET.Example.Websocket.csproj", "{F69137CE-4E16-4D08-8827-15ACDDB45860}"
-	ProjectSection(ProjectDependencies) = postProject
-		{45DB0987-C35D-41B7-8C24-0E12578A6E11} = {45DB0987-C35D-41B7-8C24-0E12578A6E11}
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LxCommunicator.NET", "LxCommunicator.NET\LxCommunicator.NET.csproj", "{BFE62D3B-F855-4A8F-8CFA-6178AB30B37F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LxCommunicator.NET.Example.Http", "LxCommunicator.NET.Example.Http\LxCommunicator.NET.Example.Http.csproj", "{070729E5-C933-45DE-907C-02DD77EAE694}"
-	ProjectSection(ProjectDependencies) = postProject
-		{45DB0987-C35D-41B7-8C24-0E12578A6E11} = {45DB0987-C35D-41B7-8C24-0E12578A6E11}
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LxCommunicator.NET.Example.Http", "LxCommunicator.NET.Example.Http\LxCommunicator.NET.Example.Http.csproj", "{5A793E57-2E50-48ED-AEF0-4DA3068FD591}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LxCommunciator.NET", "LxCommunciator.NET\LxCommunciator.NET.csproj", "{45DB0987-C35D-41B7-8C24-0E12578A6E11}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LxCommunicator.NET.Example.Websocket", "LxCommunicator.NET.Example.Websocket\LxCommunicator.NET.Example.Websocket.csproj", "{6B606C6C-9497-439C-BE2C-7415CB1A3E06}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,23 +15,23 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F69137CE-4E16-4D08-8827-15ACDDB45860}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F69137CE-4E16-4D08-8827-15ACDDB45860}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F69137CE-4E16-4D08-8827-15ACDDB45860}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F69137CE-4E16-4D08-8827-15ACDDB45860}.Release|Any CPU.Build.0 = Release|Any CPU
-		{070729E5-C933-45DE-907C-02DD77EAE694}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{070729E5-C933-45DE-907C-02DD77EAE694}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{070729E5-C933-45DE-907C-02DD77EAE694}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{070729E5-C933-45DE-907C-02DD77EAE694}.Release|Any CPU.Build.0 = Release|Any CPU
-		{45DB0987-C35D-41B7-8C24-0E12578A6E11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{45DB0987-C35D-41B7-8C24-0E12578A6E11}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{45DB0987-C35D-41B7-8C24-0E12578A6E11}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{45DB0987-C35D-41B7-8C24-0E12578A6E11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BFE62D3B-F855-4A8F-8CFA-6178AB30B37F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFE62D3B-F855-4A8F-8CFA-6178AB30B37F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFE62D3B-F855-4A8F-8CFA-6178AB30B37F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFE62D3B-F855-4A8F-8CFA-6178AB30B37F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A793E57-2E50-48ED-AEF0-4DA3068FD591}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A793E57-2E50-48ED-AEF0-4DA3068FD591}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A793E57-2E50-48ED-AEF0-4DA3068FD591}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A793E57-2E50-48ED-AEF0-4DA3068FD591}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B606C6C-9497-439C-BE2C-7415CB1A3E06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B606C6C-9497-439C-BE2C-7415CB1A3E06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B606C6C-9497-439C-BE2C-7415CB1A3E06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B606C6C-9497-439C-BE2C-7415CB1A3E06}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {2135094B-F712-401D-B24C-F536A9C5541E}
+		SolutionGuid = {D0EFF03E-3B6D-416E-9DBF-3DEFD84F1E3E}
 	EndGlobalSection
 EndGlobal
