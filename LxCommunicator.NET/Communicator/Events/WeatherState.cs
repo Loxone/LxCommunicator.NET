@@ -1,45 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
+using System.Text;
 
 namespace Loxone.Communicator.Events {
-	public class DaytimerState : EventState{
+	public class WeatherState : EventState {
 		/// <summary>
-		/// Default value
+		/// The date since the last update
 		/// </summary>
-		public double DefaultValue { get; private set; }
+		public uint LastUpdate { get; private set; }
 		/// <summary>
-		/// Number of entries
+		/// The number of entries
 		/// </summary>
 		public int NrEntries { get; private set; }
-		/// <summary>
-		/// The actual Daytimer entries
-		/// </summary>
-		public List<DaytimerEntry> Entries { get; private set; }
 
 		/// <summary>
-		/// Reads the next daytimerState of a binaryReader
+		/// The actual weatherEntries
+		/// </summary>
+		public List<WeatherEntry> Entries { get; private set; }
+
+		/// <summary>
+		/// Reads the next weatherState of a binaryReader
 		/// </summary>
 		/// <param name="reader">The reader that should be read of</param>
-		/// <returns>The read daytimerState</returns>
-		public static DaytimerState Parse(BinaryReader reader) {
-			DaytimerState state = new DaytimerState();
+		/// <returns>The read weatherState</returns>
+		public static WeatherState Parse(BinaryReader reader) {
+			WeatherState state = new WeatherState();
 			state.SetUuid(Communicator.Uuid.ParseUuid(reader.ReadBytes(16)));
-			state.DefaultValue = reader.ReadDouble();
+			state.LastUpdate = reader.ReadUInt32();
 			state.NrEntries = reader.ReadInt32();
-			state.Entries = new List<DaytimerEntry>(state.NrEntries);
+			state.Entries = new List<WeatherEntry>(state.NrEntries);
 			for (int i = 0; i < state.NrEntries; i++) {
 				BinaryReader entryReader = new BinaryReader(new MemoryStream(reader.ReadBytes(24)));
-				state.Entries.Add(DaytimerEntry.Parse(entryReader));
+				state.Entries.Add(WeatherEntry.Parse(entryReader));
 			}
 			return state;
 		}
 
 		/// <summary>
-		/// Gets the value of the daytimerState
+		/// Gets the value of the weatherState
 		/// </summary>
-		/// <returns>A List containing the entries</returns>
+		/// <returns>A list containing the weatherEntries</returns>
 		public override object GetValue() {
 			return Entries;
 		}

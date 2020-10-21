@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.Text;
-using Newtonsoft.Json;
 using System.Net;
+using System.Text;
 
 namespace Loxone.Communicator {
 	/// <summary>
@@ -88,7 +88,8 @@ namespace Loxone.Communicator {
 					Estimated = (bytes[2] & (byte)128) == 128
 				};
 				return true;
-			} catch (Exception ex) {
+			}
+			catch (Exception ex) {
 				throw new WebserviceException("Parse MessageHeader failed: " + ex.Message, ex);
 			}
 		}
@@ -130,7 +131,8 @@ namespace Loxone.Communicator {
 			try {
 				string content = GetAsStringContent();
 				return JsonConvert.DeserializeObject<WebserviceContainer>(content).Response;
-			} catch {
+			}
+			catch {
 				return null;
 			}
 		}
@@ -144,7 +146,8 @@ namespace Loxone.Communicator {
 			try {
 				string content = GetAsStringContent();
 				return JsonConvert.DeserializeObject<WebserviceContainer<T>>(content).Response;
-			} catch {
+			}
+			catch {
 				return null;
 			}
 		}

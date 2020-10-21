@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Loxone.Communicator.Events;
+using System;
 using System.Collections.Generic;
-using Loxone.Communicator.Events;
 using System.Text;
 
 namespace Loxone.Communicator {

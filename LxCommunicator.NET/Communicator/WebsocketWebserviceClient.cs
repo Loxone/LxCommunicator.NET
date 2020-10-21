@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Loxone.Communicator.Events;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Loxone.Communicator.Events;
 
 namespace Loxone.Communicator {
 	/// <summary>
@@ -19,37 +19,45 @@ namespace Loxone.Communicator {
 		/// The httpCLient used for checking if the miniserver is available and getting the public key.
 		/// </summary>
 		public HttpWebserviceClient HttpClient { get; private set; }
+
 		/// <summary>
 		/// The websocket the webservices will be sent with.
 		/// </summary>
 		private ClientWebSocket WebSocket;
+
 		/// <summary>
 		/// A Listener to catch every incoming message from the miniserver
 		/// </summary>
 		private Task Listener;
+
 		/// <summary>
 		/// Event, fired when a not expected Message is received.
 		/// Contains the message in the eventArgs
 		/// </summary>
 		private event EventHandler<MessageReceivedEventArgs> OnReceiveMessge;
+
 		/// <summary>
 		/// Event, fired when an eventTable is received and parsed.
 		/// Contains the eventTable in the eventArgs
 		/// </summary>
 		public event EventHandler<EventStatesParsedEventArgs> OnReceiveEventTable;
+
 		/// <summary>
 		/// Event, fired when the connection is authenticated or a new token is received.
 		/// Contains the tokenHandler with the used token in the eventArgs.
 		/// </summary>
 		public event EventHandler<ConnectionAuthenticatedEventArgs> OnAuthenticated;
+
 		/// <summary>
 		/// The cancellationTokenSource used for cancelling the listener and receiving messages
 		/// </summary>
 		private readonly CancellationTokenSource TokenSource = new CancellationTokenSource();
+
 		/// <summary>
 		/// List of all sent requests that wait for a response
 		/// </summary>
 		private readonly List<WebserviceRequest> Requests = new List<WebserviceRequest>();
+
 		/// <summary>
 		/// Initialises a new instance of the websocketWebserviceClient.
 		/// </summary>
@@ -71,7 +79,7 @@ namespace Loxone.Communicator {
 		/// After the event fired, the connection to the miniserver can be used.
 		/// </summary>
 		/// <param name="handler">The tokenhandler that should be used</param>
-		public async override Task Authenticate(TokenHandler handler) {
+		public override async Task Authenticate(TokenHandler handler) {
 			if (await MiniserverReachable()) {
 				WebSocket = new ClientWebSocket();
 				await WebSocket.ConnectAsync(new Uri($"ws://{IP}:{Port}/ws/rfc6455"), CancellationToken.None);
@@ -81,15 +89,15 @@ namespace Loxone.Communicator {
 				TokenHandler = handler;
 				if (TokenHandler?.Token != null) {
 					string hash = await TokenHandler?.GetTokenHash();
-					string response = (await SendWebservice(new WebserviceRequest<string> ($"authwithtoken/{hash}/{TokenHandler.Username}", EncryptionType.RequestAndResponse))).Value;
+					string response = (await SendWebservice(new WebserviceRequest<string>($"authwithtoken/{hash}/{TokenHandler.Username}", EncryptionType.RequestAndResponse))).Value;
 					AuthResponse authResponse = JsonConvert.DeserializeObject<AuthResponse>(response);
 					if (authResponse.ValidUntil != default && authResponse.TokenRights != default) {
-						OnAuthenticated.BeginInvoke(this, new ConnectionAuthenticatedEventArgs(TokenHandler), null, null);
+						OnAuthenticated.Invoke(this, new ConnectionAuthenticatedEventArgs(TokenHandler));
 						return;
 					}
 				}
 				if (await TokenHandler.RequestNewToken()) {
-					OnAuthenticated.BeginInvoke(this, new ConnectionAuthenticatedEventArgs(TokenHandler), null, null);
+					OnAuthenticated.Invoke(this, new ConnectionAuthenticatedEventArgs(TokenHandler));
 					return;
 				}
 				await HttpClient?.Authenticate(new TokenHandler(HttpClient, handler.Username, handler.Token, false));
@@ -106,18 +114,21 @@ namespace Loxone.Communicator {
 
 				if (response != null && response != "") {
 					return true;
-				} else {
+				}
+				else {
 					return false;
 				}
-			} catch (Exception) {
+			}
+			catch (Exception) {
 				return false;
 			}
 		}
+
 		/// <summary>
 		/// The listener starts to wait for messsages from the miniserver
 		/// </summary>
 		private void BeginListening() {
-			if(Listener != null) {
+			if (Listener != null) {
 				TokenSource.Cancel();
 				Listener = null;
 			}
@@ -125,24 +136,26 @@ namespace Loxone.Communicator {
 				while (WebSocket.State == WebSocketState.Open) {
 					WebserviceResponse response = await ReceiveWebsocketMessage(1024, TokenSource.Token);
 					if (!HandleWebserviceResponse(response) && !ParseEventTable(response.Content, response.Header.Type)) {
-						OnReceiveMessge?.BeginInvoke(WebSocket, new MessageReceivedEventArgs(response), null, null);
+						OnReceiveMessge?.Invoke(WebSocket, new MessageReceivedEventArgs(response));
 					}
 					await Task.Delay(10);
 				}
 			}, TokenSource.Token);
 		}
+
 		/// <summary>
 		/// Sends a webservice to the miniserver and waits until its receives an answer
 		/// </summary>
 		/// <param name="request">The Request that should be sent</param>
 		/// <returns>The Response the miniserver returns</returns>
-		public async override Task<WebserviceResponse> SendWebservice(WebserviceRequest request) {
+		public override async Task<WebserviceResponse> SendWebservice(WebserviceRequest request) {
 			switch (request?.Encryption) {
 				case EncryptionType.Request:
 					request.Command = Uri.EscapeDataString(Cryptography.AesEncrypt($"salt/{Session.Salt}/{request.Command}", Session));
 					request.Command = $"jdev/sys/enc/{request.Command}";
 					request.Encryption = EncryptionType.None;
 					return await SendWebservice(request);
+
 				case EncryptionType.RequestAndResponse:
 					string command = Uri.EscapeDataString(Cryptography.AesEncrypt($"salt/{Session.Salt}/{request.Command}", Session));
 					command = $"jdev/sys/fenc/{command}";
@@ -150,10 +163,12 @@ namespace Loxone.Communicator {
 					WebserviceResponse encrypedResponse = await SendWebservice(encryptedRequest);
 					if (encrypedResponse == null) {
 						request.TryValidateResponse(new WebserviceResponse(null, null, (int?)WebSocket?.CloseStatus));
-					} else {
+					}
+					else {
 						request.TryValidateResponse(new WebserviceResponse(encrypedResponse.Header, Encoding.UTF8.GetBytes(Cryptography.AesDecrypt(encrypedResponse.GetAsStringContent(), Session)), (int?)WebSocket?.CloseStatus));
 					}
 					return request.WaitForResponse();
+
 				default:
 				case EncryptionType.None:
 					if (WebSocket == null || WebSocket.State != WebSocketState.Open) {
@@ -167,6 +182,7 @@ namespace Loxone.Communicator {
 					return request.WaitForResponse();
 			}
 		}
+
 		/// <summary>
 		/// Receives a webservice from the Miniservers
 		/// </summary>
@@ -185,6 +201,7 @@ namespace Loxone.Communicator {
 			data = await InternalReceiveWebsocketMessage(header.Length, TokenSource.Token);
 			return new WebserviceResponse(header, data, (int?)WebSocket?.CloseStatus);
 		}
+
 		/// <summary>
 		/// Internally receives messages from the websocket
 		/// </summary>
@@ -208,6 +225,7 @@ namespace Loxone.Communicator {
 				return stream.ToArray();
 			}
 		}
+
 		/// <summary>
 		/// Handles the assignment of the responses to the right requests.
 		/// </summary>
@@ -224,6 +242,7 @@ namespace Loxone.Communicator {
 			}
 			return false;
 		}
+
 		/// <summary>
 		/// Parses a received message into an eventTable.
 		/// Fires an onReceiveEventTable event if successful
@@ -241,31 +260,38 @@ namespace Loxone.Communicator {
 							case MessageType.EventTableValueStates:
 								state = ValueState.Parse(reader);
 								break;
+
 							case MessageType.EventTableTextStates:
 								state = TextState.Parse(reader);
 								break;
+
 							case MessageType.EventTableDaytimerStates:
 								state = DaytimerState.Parse(reader);
 								break;
+
 							case MessageType.EventTableWeatherStates:
 								state = WeatherState.Parse(reader);
 								break;
+
 							default:
 								return false;
 						}
 						eventStates.Add(state);
 					} while (reader.BaseStream.Length - reader.BaseStream.Position > 0);
-				} catch {
+				}
+				catch {
 					return false;
 				}
 			}
 			if (OnReceiveEventTable != null) {
-				OnReceiveEventTable.BeginInvoke(this, new EventStatesParsedEventArgs(type, eventStates), null, null);
+				OnReceiveEventTable.Invoke(this, new EventStatesParsedEventArgs(type, eventStates));
 				return true;
-			} else {
+			}
+			else {
 				return false;
 			}
 		}
+
 		/// <summary>
 		/// Disposes the WebserviceClient
 		/// </summary>

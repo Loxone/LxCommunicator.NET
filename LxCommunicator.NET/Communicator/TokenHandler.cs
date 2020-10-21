@@ -15,26 +15,32 @@ namespace Loxone.Communicator {
 		/// The webserviceClient used for communication with the miniserver
 		/// </summary>
 		public WebserviceClient WsClient { get; private set; }
+
 		/// <summary>
 		/// The token used for authentication
 		/// </summary>
 		public Token Token { get; private set; }
+
 		/// <summary>
 		/// The cancellationSource for cancelling autoRenew
 		/// </summary>
 		private readonly CancellationTokenSource CancellationSource = new CancellationTokenSource();
+
 		/// <summary>
 		/// The username of the current user
 		/// </summary>
 		public string Username { get; private set; }
+
 		/// <summary>
 		/// The password f the current user
 		/// </summary>
 		private string Password { get; set; }
+
 		/// <summary>
 		/// Whether the can tokenHandler renew the token automatically
 		/// </summary>
 		private bool NeedRenewToken = true;
+
 		/// <summary>
 		/// Whether the tokenHandler is allowed to renew the token automatically
 		/// </summary>
@@ -45,6 +51,7 @@ namespace Loxone.Communicator {
 				RenewTokenOrScheduleIfNeeded().Wait();
 			}
 		}
+
 		/// <summary>
 		/// Event, fired when the token updates.
 		/// Contains the tokenHandler with the updated token in the eventArgs
@@ -87,10 +94,11 @@ namespace Loxone.Communicator {
 		private async Task RenewTokenOrScheduleIfNeeded() {
 			CancellationSource.Cancel();
 			if (Token != null && NeedRenewToken) {
-				double seconds = (Token.ValidUntil - DateTime.Now).TotalSeconds * 0.9 ;
+				double seconds = (Token.ValidUntil - DateTime.Now).TotalSeconds * 0.9;
 				if (seconds < 0) {
 					await RenewToken();
-				} else {
+				}
+				else {
 					Task task = Task.Delay(Convert.ToInt32(Math.Min(seconds * 1000, int.MaxValue)), CancellationSource.Token).ContinueWith(async (t) => {
 						await RenewTokenOrScheduleIfNeeded();
 					}, CancellationSource.Token);
@@ -106,7 +114,7 @@ namespace Loxone.Communicator {
 			if (Password == null) {
 				throw new WebserviceException("Password is not set!");
 			}
-			
+
 			UserKey userKey = await WsClient.Session.GetUserKey(Username);
 			HashAlgorithm sha = userKey.GetHashAlgorithm();
 			HMAC hmacSha = userKey.GetHMAC();
@@ -117,11 +125,10 @@ namespace Loxone.Communicator {
 			await RenewTokenOrScheduleIfNeeded();
 			if (Token != null && Token.JsonWebToken != default && Token.Key != default && Token.ValidUntil != default) {
 				return true;
-			} else {
+			}
+			else {
 				return false;
 			}
-
-			
 		}
 
 		/// <summary>
@@ -133,7 +140,7 @@ namespace Loxone.Communicator {
 			}
 			string hash = await GetTokenHash();
 			Token = (await WsClient.SendWebservice(new WebserviceRequest<Token>($"jdev/sys/refreshjwt/{hash}/{Username}", EncryptionType.RequestAndResponse))).Value;
-			OnUpdateToken?.BeginInvoke(this, new ConnectionAuthenticatedEventArgs(this), null, null);
+			OnUpdateToken?.Invoke(this, new ConnectionAuthenticatedEventArgs(this));
 			await RenewTokenOrScheduleIfNeeded();
 		}
 
@@ -144,7 +151,8 @@ namespace Loxone.Communicator {
 			string hash = await GetTokenHash();
 			try {
 				await WsClient.SendWebservice(new WebserviceRequest<object>($"jdev/sys/killtoken/{hash}/{Username}", EncryptionType.RequestAndResponse) { Timeout = 0 });
-			}catch {
+			}
+			catch {
 			}
 			Token = null;
 			CancellationSource.Cancel();
