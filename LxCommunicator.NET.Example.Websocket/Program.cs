@@ -13,7 +13,7 @@ namespace LxCommunicator.NET.Example.Websocket {
                     handler.SetPassword("LoxLIVEpasswordTest");
                     client.OnReceiveEventTable += Client_OnReceiveEventTable;
                     client.OnAuthenticated += Client_OnAuthenticated;
-					client.OnKeepalive += Client_OnKeepAlive;
+					client.OnKeepalive += Client_OnKeepalive;
                     await client.Authenticate(handler);
                     string result = (await client.SendWebservice(new WebserviceRequest<string>("jdev/sps/enablebinstatusupdate", EncryptionType.None))).Value;
                     Console.ReadLine();
@@ -32,7 +32,7 @@ namespace LxCommunicator.NET.Example.Websocket {
             }
         }
 
-		private static void Client_OnKeepAlive(object sender, KeepaliveEventArgs e) {
+		private static void Client_OnKeepalive(object sender, KeepaliveEventArgs e) {
 			Console.WriteLine(e.IsResponding ? "Got Keepalive!" : "Keepalive is missing!");
 		}
 	}

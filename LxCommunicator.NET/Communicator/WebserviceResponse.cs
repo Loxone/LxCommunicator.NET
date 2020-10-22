@@ -192,7 +192,7 @@ namespace Loxone.Communicator {
 		EventTableTextStates = 3,
 		EventTableDaytimerStates = 4,
 		OutOfService = 5,
-		KeepAlive = 6,
+		Keepalive = 6,
 		EventTableWeatherStates = 7
 	}
 	/// <summary>
