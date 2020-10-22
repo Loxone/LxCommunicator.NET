@@ -62,7 +62,7 @@ namespace Loxone.Communicator {
 		/// <param name="response">The WebserviceResponse to validate</param>
 		/// <returns>Whether the validation succeeded or not</returns>
 		public virtual bool TryValidateResponse(WebserviceResponse response) {
-			if (response != null) {
+			if (response != null && !response.Header.IsEventMessage) {
 				Response = response;
 				ResponseReceived.Set();
 				return true;

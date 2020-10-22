@@ -70,6 +70,21 @@ namespace Loxone.Communicator {
 		/// The lenght of the received message
 		/// </summary>
 		public uint Length { get; private set; }
+
+		public bool IsEventMessage {
+			get {
+				switch (Type) {
+					case MessageType.EventTableValueStates:
+					case MessageType.EventTableTextStates:
+					case MessageType.EventTableDaytimerStates:
+					case MessageType.EventTableWeatherStates:
+						return true;
+					default:
+						return false;
+				}
+			}
+		}
+
 		/// <summary>
 		/// Tries to parse received bytes into a message header.
 		/// </summary>
@@ -177,7 +192,7 @@ namespace Loxone.Communicator {
 		EventTableTextStates = 3,
 		EventTableDaytimerStates = 4,
 		OutOfService = 5,
-		KeepAlive = 6,
+		Keepalive = 6,
 		EventTableWeatherStates = 7
 	}
 	/// <summary>
