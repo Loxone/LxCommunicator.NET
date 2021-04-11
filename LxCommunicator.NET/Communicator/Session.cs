@@ -123,24 +123,6 @@ namespace Loxone.Communicator {
 			Salt = string.Concat(Enumerable.Range(0, digits).Select(x => random.Next(16).ToString("X")));
 		}
 		
-// Copied from other project to find fix for linux
-		// Fix on Linux https://github.com/bcgit/bc-csharp/issues/160
-	// 	X509Certificate2 x509;
-	// 		if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-	// 	{
-	// 		var rsa = DotNetUtilities.ToRSA((RsaPrivateCrtKeyParameters) subjectKeyPair.Private);
-	// 		x509 = x509i.CopyWithPrivateKey(rsa);
-	// 		x509.FriendlyName = subjectName; //System.PlatformNotSupportedException: The FriendlyName value cannot be set on Unix.
-	// 	}
-	// else
-	// {
-	// var parms = DotNetUtilities.ToRSAParameters(subjectKeyPair.Private as RsaPrivateCrtKeyParameters);
-	// var rsa = RSA.Create();
-	// rsa.ImportParameters(parms);
-	// x509 = x509i.CopyWithPrivateKey(rsa);
-	// }
-// End copy
-		
 		/// <summary>
 		/// Converts a string in PEM format to XML format
 		/// </summary>
