@@ -131,7 +131,13 @@ namespace Loxone.Communicator {
 		private string PemToXml(string pem) {
 			return GetXmlRsaKey(pem, obj => {
 				var publicKey = (RsaKeyParameters)obj;
-				return DotNetUtilities.ToRSA(publicKey, new CspParameters { Flags = CspProviderFlags.UseMachineKeyStore });
+				// CspParameters requires Windows. Details: https://github.com/bcgit/bc-csharp/issues/160
+				if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+					return DotNetUtilities.ToRSA(publicKey, new CspParameters { Flags = CspProviderFlags.UseMachineKeyStore });
+				var parms = DotNetUtilities.ToRSAParameters(publicKey);
+				var rsa = RSA.Create();
+				rsa.ImportParameters(parms);
+				return rsa;
 			}, rsa => rsa.ToXmlString(false));
 
 		}
