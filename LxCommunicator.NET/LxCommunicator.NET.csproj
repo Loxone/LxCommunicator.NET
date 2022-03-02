@@ -3,19 +3,20 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net472;net6.0</TargetFrameworks>
     <PackageId>LxCommunicator</PackageId>
-    <Version>0.9.4</Version>
+    <Version>0.9.5</Version>
     <Authors>Loxone Electronic GmbH</Authors>
     <Product>LxCommunicator.NET</Product>
     <Description>This library exposes all necessary classes to establish a secure and encrypted connection to a Loxone Miniserver.</Description>
-    <Copyright>Copyright 2020 Loxone Electronic GmbH</Copyright>
+    <Copyright>Copyright 2022 Loxone Electronic GmbH</Copyright>
     <PackageProjectUrl>https://www.loxone.com</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Loxone/LxCommunicator.NET.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>Loxone Miniserver Loxone-Miniserver Smart-Home Automation Home-Automation</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageIcon>Logo.png</PackageIcon>
   </PropertyGroup>
-	
+
   <ItemGroup Condition=" '$(TargetFramework)' == 'net472' ">
     <Reference Include="System.Web" />
   </ItemGroup>
@@ -32,6 +33,10 @@
     <None Include="..\LICENSE">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
+    </None>
+    <None Include="..\Logo.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
 
