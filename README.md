@@ -1,4 +1,4 @@
-# LxCommunicator.NET v0.9.4
+# LxCommunicator.NET v0.9.5
 This library exposes all necessary classes to establish a secure and encrypted connection to a Loxone Miniserver.
 LxCommunicator can be installed using NuGet 
 
@@ -7,6 +7,7 @@ LxCommunicator can be installed using NuGet
 - Please submit an issue or file an pull request if you find any issue
 
 ## Supported Frameworks
+- .Net 6.0
 - .Net Framework 4.7.2
 - .Net Standard 2.0
 
